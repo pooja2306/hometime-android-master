@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import au.com.realestate.hometime.models.ApiResponse;
 import au.com.realestate.hometime.models.Token;
 import au.com.realestate.hometime.models.Tram;
@@ -29,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Tram> southTrams;
     private List<Tram> northTrams;
 
+    private int countNorth = 0;
+    private int countSouth = 0;
+
 //    private ListView northListView;
 //    private ListView southListView;
     ListView listView;
@@ -50,55 +55,97 @@ public class MainActivity extends AppCompatActivity {
         btnNorth = (Button) findViewById(R.id.northButton);
         btnSouth = (Button) findViewById(R.id.southButton);
 
+
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                TramsApi tramsApi = createApiClient();
+               //TramsApi tramsApi = createApiClient();
+//                try {
+//                    String token = new RequestToken(tramsApi).execute("").get();
+//                    northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
+//                    southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+//                    showTrams();
+//                } catch (InterruptedException | ExecutionException e) {
+//                    e.printStackTrace();
+//                }
+                if (countNorth == 0 && countSouth == 0)
+                {
+                    Toast.makeText(MainActivity.this, "Please select a direction first!", Toast.LENGTH_LONG).show();
+                }
+                else if (countNorth == 1 || countSouth == 1)
+                {
+                    showTrams();
+                }
 
-        try {
-            String token = new RequestToken(tramsApi).execute("").get();
-            northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
-            southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
-            showTrams();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
             }
+
         });
 
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                northTrams = new ArrayList<>();
-                southTrams = new ArrayList<>();
-                showTrams();
+                    northTrams = new ArrayList<>();
+                    southTrams = new ArrayList<>();
+                    showTrams();
+                    btnNorth.setVisibility(View.VISIBLE);
+                    btnSouth.setVisibility(View.VISIBLE);
+                    countNorth = 0;
+                    countSouth = 0;
+                }
+        });
+
+        btnNorth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNorth();
+            }
+        });
+
+        btnSouth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showSouth();
             }
         });
     }
 
+    private void showNorth()
+    {
+            countNorth = 1;
+            countSouth = 0;
+            TramsApi tramsApi = createApiClient();
+            btnSouth.setVisibility(View.GONE);
 
+            try {
+                String token = new RequestToken(tramsApi).execute("").get();
+                northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
+                showTrams();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
 
-//    public void refreshClick(View view) {
-//
-//        TramsApi tramsApi = createApiClient();
-//
-//        try {
-//            String token = new RequestToken(tramsApi).execute("").get();
-//            this.northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
-//            this.southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
-//            showTrams();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void clearClick(View view) {
-//        northTrams = new ArrayList<>();
-//        southTrams = new ArrayList<>();
-//        showTrams();
-//    }
+        btnNorth.setVisibility(View.VISIBLE);
+    }
 
+    private void showSouth()
+    {
+            countSouth = 1;
+            countNorth = 0;
+
+            TramsApi tramsApi = createApiClient();
+            btnNorth.setVisibility(View.GONE);
+            try {
+                String token = new RequestToken(tramsApi).execute("").get();
+                southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+                showTrams();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        btnSouth.setVisibility(View.VISIBLE);
+    }
 
 
     private void showTrams() {
@@ -106,26 +153,35 @@ public class MainActivity extends AppCompatActivity {
         List<String> northValues = new ArrayList<>();
         List<String> southValues = new ArrayList<>();
 
-        for (Tram tram : northTrams) {
-            String date = dateFromDotNetDate(tram.predictedArrival).toString();
-            northValues.add(date);
+        if (countNorth == 1)
+        {
+            for (Tram tram : northTrams) {
+                String date = dateFromDotNetDate(tram.predictedArrival).toString();
+                northValues.add(date);
+            }
+            listView.setAdapter(new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    northValues));
         }
+        else if (countSouth == 1)
+        {
+
+            listView.setAdapter(new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    southValues));
+        }
+
 
         for (Tram tram : southTrams) {
             String date = dateFromDotNetDate(tram.predictedArrival).toString();
             southValues.add(date);
         }
 
-        northListView.setAdapter(new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                northValues));
-
-        southListView.setAdapter(new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                southValues));
     }
+
+
 
     /////////////
     // Convert .NET Date to Date
