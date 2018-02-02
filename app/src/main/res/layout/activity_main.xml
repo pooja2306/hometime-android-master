@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="au.com.realestate.hometime.MainActivity">
+    tools:context="au.com.realestate.hometime.MainActivity"
+    android:background="@drawable/moving_tram_back">
 
     <LinearLayout
         android:id="@+id/buttonPanel"
@@ -20,6 +21,10 @@
             android:layout_height="wrap_content"
             android:text="Clear"
             android:layout_weight="1"
+            android:background="@drawable/oval"
+            android:textSize="18dip"
+            android:textStyle="bold"
+            android:fontFamily="cursive"
             android:onClick="clearClick"
             />
 
@@ -27,9 +32,13 @@
             android:id="@+id/refreshButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Refresh"
-            android:layout_weight="1"
+            android:textSize="18dip"
+            android:textStyle="bold"
+            android:fontFamily="cursive"
             android:onClick="refreshClick"
+            android:layout_weight="1"
+            android:background="@drawable/oval"
+            android:text="Refresh"
             />
     </LinearLayout>
 
