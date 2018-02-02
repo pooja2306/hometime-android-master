@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import au.com.realestate.hometime.models.ApiResponse;
 import au.com.realestate.hometime.models.Token;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView northListView;
     private ListView southListView;
 
+    Button btnRefresh, btnClear, btnNorth, btnSouth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,27 +41,62 @@ public class MainActivity extends AppCompatActivity {
 
         northListView = (ListView) findViewById(R.id.northListView);
         southListView = (ListView) findViewById(R.id.southListView);
-    }
 
-    public void refreshClick(View view) {
+        btnRefresh = (Button) findViewById(R.id.refreshButton);
+        btnClear = (Button) findViewById(R.id.clearButton);
+        btnNorth = (Button) findViewById(R.id.northButton);
+        btnSouth = (Button) findViewById(R.id.southButton);
 
-        TramsApi tramsApi = createApiClient();
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                TramsApi tramsApi = createApiClient();
 
         try {
             String token = new RequestToken(tramsApi).execute("").get();
-            this.northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
-            this.southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+            northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
+            southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
             showTrams();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+            }
+        });
+
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                northTrams = new ArrayList<>();
+                southTrams = new ArrayList<>();
+                showTrams();
+            }
+        });
     }
 
-    public void clearClick(View view) {
-        northTrams = new ArrayList<>();
-        southTrams = new ArrayList<>();
-        showTrams();
-    }
+
+
+//    public void refreshClick(View view) {
+//
+//        TramsApi tramsApi = createApiClient();
+//
+//        try {
+//            String token = new RequestToken(tramsApi).execute("").get();
+//            this.northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
+//            this.southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+//            showTrams();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public void clearClick(View view) {
+//        northTrams = new ArrayList<>();
+//        southTrams = new ArrayList<>();
+//        showTrams();
+//    }
+
+
 
     private void showTrams() {
 
