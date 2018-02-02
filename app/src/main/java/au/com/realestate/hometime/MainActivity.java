@@ -177,12 +177,16 @@ public class MainActivity extends AppCompatActivity {
     /////////////
     // Convert .NET Date to Date
     ////////////
-    private Date dateFromDotNetDate(String dotNetDate) {
-
+    private  String dateExtract(String dotNetDate)
+    {
         int startIndex = dotNetDate.indexOf("(") + 1;
         int endIndex = dotNetDate.indexOf("+");
         String date = dotNetDate.substring(startIndex, endIndex);
+        return date;
+    }
 
+    private Date dateFromDotNetDate(String dotNetDate ) {
+        String date = dateExtract(dotNetDate);
         Long unixTime = Long.parseLong(date);
         return new Date(unixTime);
     }
