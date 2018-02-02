@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private int countNorth = 0;
     private int countSouth = 0;
 
-//    private ListView northListView;
-//    private ListView southListView;
     ListView listView;
 
     Button btnRefresh, btnClear, btnNorth, btnSouth;
@@ -45,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //northListView = (ListView) findViewById(R.id.northListView);
-        //southListView = (ListView) findViewById(R.id.southListView);
-
         listView = (ListView) findViewById(R.id.listView);
 
         btnRefresh = (Button) findViewById(R.id.refreshButton);
@@ -55,31 +50,19 @@ public class MainActivity extends AppCompatActivity {
         btnNorth = (Button) findViewById(R.id.northButton);
         btnSouth = (Button) findViewById(R.id.southButton);
 
-
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-               //TramsApi tramsApi = createApiClient();
-//                try {
-//                    String token = new RequestToken(tramsApi).execute("").get();
-//                    northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
-//                    southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
-//                    showTrams();
-//                } catch (InterruptedException | ExecutionException e) {
-//                    e.printStackTrace();
-//                }
                 if (countNorth == 0 && countSouth == 0)
                 {
                     Toast.makeText(MainActivity.this, "Please select a direction first!", Toast.LENGTH_LONG).show();
                 }
                 else if (countNorth == 1 || countSouth == 1)
                 {
-                    showTrams();
+                    showList();
                 }
-
             }
-
         });
 
         btnClear.setOnClickListener(new View.OnClickListener() {
@@ -98,54 +81,72 @@ public class MainActivity extends AppCompatActivity {
         btnNorth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showNorth();
+                countNorth = 1;
+                countSouth = 0;
+                showList();
             }
         });
 
         btnSouth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                showSouth();
+                countSouth = 1;
+                countNorth = 0;
+                showList();
             }
         });
     }
 
-    private void showNorth()
+    private void showList()
     {
-            countNorth = 1;
-            countSouth = 0;
             TramsApi tramsApi = createApiClient();
-            btnSouth.setVisibility(View.GONE);
+            if (countNorth == 1)
+            {
+                countSouth = 0;
+                btnSouth.setVisibility(View.GONE);
+                btnNorth.setVisibility(View.VISIBLE);
+                try {
+                    String token = new RequestToken(tramsApi).execute("").get();
+                    northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
+                    showTrams();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
 
-            try {
-                String token = new RequestToken(tramsApi).execute("").get();
-                northTrams = new RequestTrams(tramsApi, token).execute("4055").get();
-                showTrams();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            }
+        else if (countSouth == 1)
+            {
+                countNorth = 0;
+                btnNorth.setVisibility(View.GONE);
+                btnSouth.setVisibility(View.VISIBLE);
+                try {
+                    String token = new RequestToken(tramsApi).execute("").get();
+                    southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+                    showTrams();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
             }
 
-        btnNorth.setVisibility(View.VISIBLE);
     }
 
-    private void showSouth()
-    {
-            countSouth = 1;
-            countNorth = 0;
-
-            TramsApi tramsApi = createApiClient();
-            btnNorth.setVisibility(View.GONE);
-            try {
-                String token = new RequestToken(tramsApi).execute("").get();
-                southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
-                showTrams();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-
-        btnSouth.setVisibility(View.VISIBLE);
-    }
+//    private void showSouth()
+//    {
+//
+//
+//            TramsApi tramsApi = createApiClient();
+//            btnNorth.setVisibility(View.GONE);
+//            try {
+//                String token = new RequestToken(tramsApi).execute("").get();
+//                southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
+//                showTrams();
+//            } catch (InterruptedException | ExecutionException e) {
+//                e.printStackTrace();
+//            }
+//
+//        btnSouth.setVisibility(View.VISIBLE);
+//    }
 
 
     private void showTrams() {
@@ -172,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     android.R.layout.simple_list_item_1,
                     southValues));
         }
-
 
         for (Tram tram : southTrams) {
             String date = dateFromDotNetDate(tram.predictedArrival).toString();
