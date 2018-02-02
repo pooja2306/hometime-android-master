@@ -21,9 +21,13 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -139,8 +143,16 @@ public class MainActivity extends AppCompatActivity {
         {
 
             for (Tram tram : northTrams) {
-                String date = dateFromDotNetDate(tram.predictedArrival).toString();
-                northValues.add(date);
+//                String date = dateFromDotNetDate(tram.predictedArrival).toString();
+//                northValues.add(date);
+                SimpleDateFormat gmtDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+                String date= gmtDateFormat.format(dateFromDotNetDate(tram.predictedArrival)).toString();
+                String destName = tram.destination.toString();
+                String routeNo = tram.routeNo.toString();
+                String waitingTime = timeDiffFromDotNetDate(tram.predictedArrival).toString();
+                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\non "
+                        +date+"\nWaiting time in hh:mm:ss is "+ waitingTime;
+                northValues.add(listDetails);
             }
 
             listView.setAdapter(new ArrayAdapter<>(
@@ -151,8 +163,17 @@ public class MainActivity extends AppCompatActivity {
         else if (countSouth == 1)
         {
             for (Tram tram : southTrams) {
-                String date = dateFromDotNetDate(tram.predictedArrival).toString();
-                southValues.add(date);
+//                String date = dateFromDotNetDate(tram.predictedArrival).toString();
+//                southValues.add(date);
+
+                SimpleDateFormat gmtDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+                String date= gmtDateFormat.format(dateFromDotNetDate(tram.predictedArrival)).toString();
+                String destName = tram.destination.toString();
+                String routeNo = tram.routeNo.toString();
+                String waitingTime = timeDiffFromDotNetDate(tram.predictedArrival).toString();
+                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\non "
+                        +date+"\nWaiting time in hh:mm:ss is "+ waitingTime ;
+                southValues.add(listDetails);
             }
             listView.setAdapter(new ArrayAdapter<>(
                     this,
@@ -189,6 +210,24 @@ public class MainActivity extends AppCompatActivity {
         String date = dateExtract(dotNetDate);
         Long unixTime = Long.parseLong(date);
         return new Date(unixTime);
+    }
+
+    /////////////
+    // Calculate Waiting time for Trams
+    ////////////
+
+    private Time timeDiffFromDotNetDate(String dotNetDate) {
+
+        String date = dateExtract(dotNetDate);
+        Long unixTime = Long.parseLong(date);
+        Date tramArrivalDate = new Date(unixTime);
+
+        Date currentDateTime = new Date();
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        currentDateTime = cal.getTime();
+        long difference = tramArrivalDate.getTime() - currentDateTime.getTime();
+        return new Time(difference);
     }
 
     ////////////
