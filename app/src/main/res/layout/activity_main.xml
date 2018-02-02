@@ -7,36 +7,6 @@
     tools:context="au.com.realestate.hometime.MainActivity">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/buttonPanel">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="North"/>
-
-        <ListView
-            android:id="@+id/northListView"
-            style="@style/Widget.AppCompat.ListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="South"/>
-
-        <ListView
-            android:id="@+id/southListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,7 +21,7 @@
             android:text="Clear"
             android:layout_weight="1"
             android:onClick="clearClick"
-            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+            />
 
         <Button
             android:id="@+id/refreshButton"
@@ -60,7 +30,37 @@
             android:text="Refresh"
             android:layout_weight="1"
             android:onClick="refreshClick"
-            style="@style/Base.Widget.AppCompat.Button.Borderless"/>
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_above="@+id/buttonPanel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="40dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="North"/>
+
+        <ListView
+            android:id="@+id/northListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="South"/>
+
+        <ListView
+            android:id="@+id/southListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 </RelativeLayout>
 
