@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-        else if (countSouth == 1)
+             else if (countSouth == 1)
             {
                 countNorth = 0;
                 btnNorth.setVisibility(View.GONE);
@@ -128,56 +128,47 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-
     }
 
-//    private void showSouth()
-//    {
-//
-//
-//            TramsApi tramsApi = createApiClient();
-//            btnNorth.setVisibility(View.GONE);
-//            try {
-//                String token = new RequestToken(tramsApi).execute("").get();
-//                southTrams = new RequestTrams(tramsApi, token).execute("4155").get();
-//                showTrams();
-//            } catch (InterruptedException | ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//
-//        btnSouth.setVisibility(View.VISIBLE);
-//    }
-
-
     private void showTrams() {
-
+        listView.setVisibility(View.VISIBLE);
         List<String> northValues = new ArrayList<>();
         List<String> southValues = new ArrayList<>();
 
         if (countNorth == 1)
         {
+
             for (Tram tram : northTrams) {
                 String date = dateFromDotNetDate(tram.predictedArrival).toString();
                 northValues.add(date);
             }
+
             listView.setAdapter(new ArrayAdapter<>(
                     this,
-                    android.R.layout.simple_list_item_1,
+                    R.layout.list_layout,
                     northValues));
         }
         else if (countSouth == 1)
         {
-
+            for (Tram tram : southTrams) {
+                String date = dateFromDotNetDate(tram.predictedArrival).toString();
+                southValues.add(date);
+            }
             listView.setAdapter(new ArrayAdapter<>(
                     this,
-                    android.R.layout.simple_list_item_1,
+                    R.layout.list_layout,
                     southValues));
         }
 
-        for (Tram tram : southTrams) {
-            String date = dateFromDotNetDate(tram.predictedArrival).toString();
-            southValues.add(date);
-        }
+//        for (Tram tram : northTrams) {
+//            String date = dateFromDotNetDate(tram.predictedArrival).toString();
+//            northValues.add(date);
+//        }
+//
+//        for (Tram tram : southTrams) {
+//            String date = dateFromDotNetDate(tram.predictedArrival).toString();
+//            southValues.add(date);
+//        }
 
     }
 
