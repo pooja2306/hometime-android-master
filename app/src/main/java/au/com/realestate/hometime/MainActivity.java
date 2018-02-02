@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Tram> southTrams;
     private List<Tram> northTrams;
 
-    private ListView northListView;
-    private ListView southListView;
+//    private ListView northListView;
+//    private ListView southListView;
+    ListView listView;
 
     Button btnRefresh, btnClear, btnNorth, btnSouth;
 
@@ -39,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        northListView = (ListView) findViewById(R.id.northListView);
-        southListView = (ListView) findViewById(R.id.southListView);
+        //northListView = (ListView) findViewById(R.id.northListView);
+        //southListView = (ListView) findViewById(R.id.southListView);
+
+        listView = (ListView) findViewById(R.id.listView);
 
         btnRefresh = (Button) findViewById(R.id.refreshButton);
         btnClear = (Button) findViewById(R.id.clearButton);

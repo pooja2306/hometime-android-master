@@ -59,20 +59,18 @@
     </LinearLayout>
     <ListView
         android:layout_below="@id/buttonDirLayout"
-        android:id="@+id/northListView"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:nestedScrollingEnabled="true"
         />
-    <ListView
-        android:layout_below="@id/buttonDirLayout"
-        android:id="@+id/southListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:nestedScrollingEnabled="true"
-        />
+    <!--<ListView-->
+        <!--android:layout_below="@id/buttonDirLayout"-->
+        <!--android:id="@+id/southListView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:nestedScrollingEnabled="true"-->
+        <!--/>-->
 
     <LinearLayout
         android:id="@+id/buttonPanel"
