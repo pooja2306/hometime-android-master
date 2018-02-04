@@ -2,11 +2,16 @@ package au.com.realestate.hometime;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class Splash extends Activity {
 
@@ -29,9 +34,13 @@ public class Splash extends Activity {
                 }
                 catch(Exception e)
                 {
-
+                    Log.i("Exception",e.toString());
                 }
             }
         }, 2000);
+
+
     }
+
+
 }

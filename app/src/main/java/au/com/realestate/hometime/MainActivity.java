@@ -1,5 +1,11 @@
 package au.com.realestate.hometime;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +36,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private List<Tram> southTrams;
     private List<Tram> northTrams;
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private int countSouth = 0;
 
     ListView listView;
+//    Check_Internet check;
 
     Button btnRefresh, btnClear, btnNorth, btnSouth;
 
@@ -46,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        check = new Check_Internet();
+
 
         listView = (ListView) findViewById(R.id.listView);
 
@@ -54,9 +63,20 @@ public class MainActivity extends AppCompatActivity {
         btnNorth = (Button) findViewById(R.id.northButton);
         btnSouth = (Button) findViewById(R.id.southButton);
 
+        if(!haveNetworkConnection())
+        {
+            Toast.makeText(getApplication(), "No internet ", Toast.LENGTH_SHORT).show();
+        }
+
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!haveNetworkConnection())
+                {
+                    finish();
+                    System.exit(0);
+                }
 
                 if (countNorth == 0 && countSouth == 0)
                 {
@@ -85,25 +105,68 @@ public class MainActivity extends AppCompatActivity {
         btnNorth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                countNorth = 1;
-                countSouth = 0;
-                showList();
+
+                if(!haveNetworkConnection())
+                {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("No Internet")
+                            .setMessage("Please check your Internet Connection !!")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                    System.exit(0);
+
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+                else {
+                    countNorth = 1;
+                    countSouth = 0;
+                    showList();
+                }
             }
         });
 
         btnSouth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!haveNetworkConnection())
+                {
+                    Toast.makeText(getApplication(), "No internet ", Toast.LENGTH_SHORT).show();
+                }
                 countSouth = 1;
                 countNorth = 0;
                 showList();
             }
         });
+
+    }
+    boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI") ||  ni.getTypeName().equalsIgnoreCase("MOBILE"))
+            {
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            }
+
+//            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+//                if (ni.isConnected())
+//                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi;
     }
 
     private void showList()
     {
             TramsApi tramsApi = createApiClient();
+
             if (countNorth == 1)
             {
                 countSouth = 0;
@@ -139,13 +202,12 @@ public class MainActivity extends AppCompatActivity {
         List<String> northValues = new ArrayList<>();
         List<String> southValues = new ArrayList<>();
 
+        SimpleDateFormat gmtDateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a");
+
         if (countNorth == 1)
         {
 
             for (Tram tram : northTrams) {
-//                String date = dateFromDotNetDate(tram.predictedArrival).toString();
-//                northValues.add(date);
-                SimpleDateFormat gmtDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
                 String date= gmtDateFormat.format(dateFromDotNetDate(tram.predictedArrival)).toString();
                 String destName = tram.destination.toString();
                 String routeNo = tram.routeNo.toString();
@@ -163,16 +225,13 @@ public class MainActivity extends AppCompatActivity {
         else if (countSouth == 1)
         {
             for (Tram tram : southTrams) {
-//                String date = dateFromDotNetDate(tram.predictedArrival).toString();
-//                southValues.add(date);
 
-                SimpleDateFormat gmtDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
                 String date= gmtDateFormat.format(dateFromDotNetDate(tram.predictedArrival)).toString();
                 String destName = tram.destination.toString();
                 String routeNo = tram.routeNo.toString();
                 String waitingTime = timeDiffFromDotNetDate(tram.predictedArrival).toString();
                 String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\non "
-                        +date+"\nWaiting time in hh:mm:ss is "+ waitingTime ;
+                        +date+"\nWaiting time (hh:mm:ss) "+ waitingTime ;
                 southValues.add(listDetails);
             }
             listView.setAdapter(new ArrayAdapter<>(
@@ -180,17 +239,6 @@ public class MainActivity extends AppCompatActivity {
                     R.layout.list_layout,
                     southValues));
         }
-
-//        for (Tram tram : northTrams) {
-//            String date = dateFromDotNetDate(tram.predictedArrival).toString();
-//            northValues.add(date);
-//        }
-//
-//        for (Tram tram : southTrams) {
-//            String date = dateFromDotNetDate(tram.predictedArrival).toString();
-//            southValues.add(date);
-//        }
-
     }
 
 
@@ -198,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     /////////////
     // Convert .NET Date to Date
     ////////////
+
     private  String dateExtract(String dotNetDate)
     {
         int startIndex = dotNetDate.indexOf("(") + 1;
@@ -216,18 +265,47 @@ public class MainActivity extends AppCompatActivity {
     // Calculate Waiting time for Trams
     ////////////
 
-    private Time timeDiffFromDotNetDate(String dotNetDate) {
+    private String timeDiffFromDotNetDate(String dotNetDate) {
 
-        String date = dateExtract(dotNetDate);
+        int startIndex = dotNetDate.indexOf("(") + 1;
+        int endIndex = dotNetDate.indexOf("+");
+        String date = dotNetDate.substring(startIndex, endIndex);
         Long unixTime = Long.parseLong(date);
         Date tramArrivalDate = new Date(unixTime);
 
-        Date currentDateTime = new Date();
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
-        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-        currentDateTime = cal.getTime();
-        long difference = tramArrivalDate.getTime() - currentDateTime.getTime();
-        return new Time(difference);
+       // TimeZone.setDefault(TimeZone.getTimeZone("GMT+10"));
+        //Calendar cal = Calendar.getInstance("GMT");
+        //TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        Calendar cal = Calendar.getInstance();
+        Date currentDateTime = cal.getTime();
+        int ch = currentDateTime.getHours()*60;
+        int cm = currentDateTime.getMinutes();
+
+        int ah = tramArrivalDate.getHours()*60;
+        int am = tramArrivalDate.getMinutes();
+        double min = 0;
+        double hr = 0;
+
+        int total1 = ah +am;
+        int total2 = ch+cm;
+        int total = total1-total2;
+        if (total > 60)
+        {
+            min = total % 60;
+             hr = total/60 ;
+        }
+        else
+        {
+             min = total;
+             hr = 0;
+
+        }
+        Toast.makeText(this, "time = "+total+"hrs: "+hr+"min"+min, Toast.LENGTH_SHORT).show();
+
+        String diff = String.valueOf(total);
+//        long difference =0;
+//        Toast.makeText(this, "Time1 = "+ah+"hrs:"+, Toast.LENGTH_SHORT).show();
+        return (diff);
     }
 
     ////////////
