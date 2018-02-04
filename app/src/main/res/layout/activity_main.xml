@@ -83,7 +83,7 @@
             android:text="Clear"
             android:layout_weight="1"
             android:background="@drawable/oval"
-            android:textSize="18dip"
+            android:textSize="15dip"
             android:textStyle="bold"
             android:fontFamily="cursive"/>
 
@@ -92,7 +92,7 @@
             android:id="@+id/refreshButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18dip"
+            android:textSize="15dip"
             android:textStyle="bold"
             android:fontFamily="cursive"
             android:layout_weight="1"
