@@ -72,8 +72,7 @@ public class MainActivity extends Activity {
                 if(!haveNetworkConnection())
                 {
                     networkMessageDialogDisplay();
-//                    finish();
-//                    System.exit(0);
+
                 }
 
                 else {
@@ -219,7 +218,7 @@ public class MainActivity extends Activity {
                 String waitHours = partsWaitingTime[0];
                 String waitMins = partsWaitingTime[1];
 
-                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\non "
+                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\nDate & Time: "
                         +date+"\nWaiting time is "+ waitHours+" hour(s) and "+waitMins+" minutes.";
                 northValues.add(listDetails);
             }
@@ -240,7 +239,7 @@ public class MainActivity extends Activity {
                 String partsWaitingTime[] = waitingTime.split("-");
                 String waitHours = partsWaitingTime[0];
                 String waitMins = partsWaitingTime[1];
-                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\non "
+                String listDetails = "Destination : "+destName +"\nRoute No : "+ routeNo +"\nDate & Time: "
                         +date+"\nWaiting time is "+ waitHours+" hour(s) and "+waitMins+" minutes.";
                 southValues.add(listDetails);
             }
@@ -282,20 +281,16 @@ public class MainActivity extends Activity {
         String date = dotNetDate.substring(startIndex, endIndex);
         Long unixTime = Long.parseLong(date);
         Date tramArrivalDate = new Date(unixTime);
-        double min = 0;
-        double hr = 0;
+        int min = 0;
+        int hr = 0;
 
-       // TimeZone.setDefault(TimeZone.getTimeZone("GMT+10"));
-        //Calendar cal = Calendar.getInstance("GMT");
-        //TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         Calendar cal = Calendar.getInstance();
         Date currentDateTime = cal.getTime();
-        int ch = currentDateTime.getHours()*60;  //current time's hours
+        int ch = currentDateTime.getHours()*60;     //current time's hours
         int cm = currentDateTime.getMinutes();      // current time's minutes
 
-        int ah = tramArrivalDate.getHours()*60; //tram arrival time's hours
-        int am = tramArrivalDate.getMinutes();  //tram arrival time's minutes
-
+        int ah = tramArrivalDate.getHours()*60;     //tram arrival time's hours
+        int am = tramArrivalDate.getMinutes();       //tram arrival time's minutes
 
         int totalMins = (ah+am)-(ch+cm);
         if (totalMins > 60)
@@ -308,13 +303,9 @@ public class MainActivity extends Activity {
              min = totalMins;
              hr = 0;
         }
-        //Toast.makeText(this, "time = "+total+"hrs: "+hr+"min"+min, Toast.LENGTH_SHORT).show();
 
         String timeDiff = String.valueOf(hr)+"-"+ String.valueOf(min);
         return timeDiff;
-//        long difference =0;
-//        Toast.makeText(this, "Time1 = "+hrs:"+, Toast.LENGTH_SHORT).show();
-
     }
 
     ////////////
