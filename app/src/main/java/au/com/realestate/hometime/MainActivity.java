@@ -157,8 +157,6 @@ public class MainActivity extends Activity {
                 .setMessage("Please check your Internet Connection !!")
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                        System.exit(0);
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -227,6 +225,7 @@ public class MainActivity extends Activity {
                     this,
                     R.layout.list_layout,
                     northValues));
+
         }
         else if (countSouth == 1)
         {

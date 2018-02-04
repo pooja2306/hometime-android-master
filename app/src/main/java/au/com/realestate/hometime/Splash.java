@@ -34,13 +34,10 @@ public class Splash extends Activity {
                 }
                 catch(Exception e)
                 {
-                    Log.i("Exception",e.toString());
+                    Log.i("Exception: ",e.toString());
                 }
             }
         }, 2000);
 
-
     }
-
-
 }
